@@ -6,9 +6,13 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import clsx from "clsx";
 import {caseData as knifeinback} from "@/data/cases/knife-in-back";
-
+import {caseData as lasttrain} from "@/data/cases/last-train";
+import {caseData as lastrehearsal} from "@/data/cases/last-rehearsal";
 const caseMap = {
     "knife-in-back": knifeinback,
+    "last-train": lasttrain,
+    "last-rehearsal": lastrehearsal,
+
 };
 
     // можно добавить другие кейсы тут
@@ -79,6 +83,7 @@ export default function CasePage() {
 
 
     return (
+
         <div className="min-h-screen bg-black text-white py-12 px-4">
             <h1 className="text-4xl font-bold text-center mb-10">{data.title}</h1>
             <p> количество ходов  { movesLeft}</p>
