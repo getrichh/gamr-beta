@@ -2,7 +2,6 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -10,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 // Импорты кейсов
 import { caseData as knifeinback } from "@/data/cases/knife-in-back";
 import { caseData as lasttrain } from "@/data/cases/last-train";
-import { caseData as lastrehearsal } from "@/data/cases/last-rehearsal";
+import { caseData as lastrehearsal } from "@/data/cases/last-rehearsaltest";
 
 // Карта кейсов
 const caseMap = {
@@ -26,11 +25,16 @@ export default function CasePage() {
     const data = caseMap[id as string];
     const STORAGE_KEY = `detective-game-progress-${id}`;
 
-    const [movesLeft, setMovesLeft] = useState(5);
+    const [movesLeft, setMovesLeft] = useState(50);
     const [openedCard, setOpenedCard] = useState<number[]>([]);
     const [visibleCards, setVisibleCards] = useState<boolean[]>(data.cards.map(c => !c.locked));
     const [selectedCard, setSelectedCard] = useState<null | { title: string; description: string }>(null);
+// Подсчёт количества ключевых карточек
+    const keyCardCount = data.cards.filter((card) => card.keyCard).length;
 
+    const openedKeyCards = data.cards.filter(
+        (card, idx) => card.keyCard && openedCard.includes(idx)
+    ).length;
     // Загрузка из localStorage
     useEffect(() => {
         const saved = localStorage.getItem(STORAGE_KEY);
@@ -88,7 +92,9 @@ export default function CasePage() {
             </div>
 
             <p className="text-center text-gray-400 mb-8">Осталось ходов: {movesLeft}</p>
-
+            <p className="text-center text-yellow-500 mb-8">
+                🔑 Ключевые улики: {openedKeyCards} / {keyCardCount}
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
                 {data.cards.map((card, index) =>
                     visibleCards[index] ? (
