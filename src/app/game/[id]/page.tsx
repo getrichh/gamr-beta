@@ -1,11 +1,10 @@
 "use client";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-
+import { useEffect, useState, useMemo } from "react";
 // Импорты кейсов
 import { caseData as knifeinback } from "@/data/cases/knife-in-back";
 import { caseData as lasttrain } from "@/data/cases/last-train";
@@ -32,7 +31,15 @@ export default function CasePage() {
     const { id } = useParams();
     const data = caseMap[id as string];
     const STORAGE_KEY = `detective-game-progress-${id}`;
-
+    const groupedCards = useMemo(() => {
+        const groups: Record<string, { index: number; card: any }[]> = {};
+        data.cards.forEach((card, index) => {
+            const owner = card.owner || "system";
+            if (!groups[owner]) groups[owner] = [];
+            groups[owner].push({ index, card });
+        });
+        return groups;
+    }, [data.cards]);
     const [movesLeft, setMovesLeft] = useState(50);
     const [openedCard, setOpenedCard] = useState<number[]>([]);
     const [visibleCards, setVisibleCards] = useState<boolean[]>(data.cards.map(c => !c.locked));
@@ -103,31 +110,50 @@ export default function CasePage() {
             <p className="text-center text-yellow-500 mb-8">
                 🔑 Ключевые улики: {openedKeyCards} / {keyCardCount}
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                {data.cards.map((card, index) =>
-                    visibleCards[index] ? (
-                        <Card
-                            key={index}
-                            onClick={() => handleCardClick(index)}
-                            className={clsx(
-                                "text-white transition cursor-pointer",
-                                ownerColor[card.owner || "system"], // Цветовая тема по owner
-                                {
-                                    "border-white": openedCard.includes(index),
-                                    "opacity-30 pointer-events-none": !openedCard.includes(index) && movesLeft <= 0,
-                                    "hover:border-white": !openedCard.includes(index) && movesLeft > 0,
-                                }
+            <div className="space-y-12 max-w-6xl mx-auto">
+                {Object.entries(groupedCards).map(([owner, cards]) => (
+                    <div key={owner}>
+                        <h2 className="text-xl font-semibold capitalize mb-4 text-white">
+                            {owner === "system"
+                                ? "Атмосфера"
+                                : owner === "detective"
+                                    ? "Размышления"
+                                    : owner === "anna"
+                                        ? "Анна Михайловна"
+                                        : owner === "lida"
+                                            ? "Лида Рыжикова"
+                                            : owner === "viktor"
+                                                ? "Виктор Петрович"
+                                                : owner}
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {cards.map(({ index, card }) =>
+                                visibleCards[index] ? (
+                                    <Card
+                                        key={index}
+                                        onClick={() => handleCardClick(index)}
+                                        className={clsx(
+                                            "text-white transition cursor-pointer",
+                                            ownerColor[card.owner || "system"],
+                                            {
+                                                "border-white": openedCard.includes(index),
+                                                "opacity-30 pointer-events-none": !openedCard.includes(index) && movesLeft <= 0,
+                                                "hover:border-white": !openedCard.includes(index) && movesLeft > 0,
+                                            }
+                                        )}
+                                    >
+                                        <CardHeader><CardTitle>{card.title}</CardTitle></CardHeader>
+                                        <CardContent>
+                                            <p className="text-sm text-zinc-300">
+                                                {openedCard.includes(index) ? "Просмотрено" : "Нажмите, чтобы изучить"}
+                                            </p>
+                                        </CardContent>
+                                    </Card>
+                                ) : null
                             )}
-                        >
-                            <CardHeader><CardTitle>{card.title}</CardTitle></CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-zinc-300">
-                                    {openedCard.includes(index) ? "Просмотрено" : "Нажмите, чтобы изучить"}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    ) : null
-                )}
+                        </div>
+                    </div>
+                ))}
             </div>
 
             <Dialog open={!!selectedCard} onOpenChange={() => setSelectedCard(null)}>
