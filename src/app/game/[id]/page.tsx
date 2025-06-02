@@ -9,13 +9,21 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 // Импорты кейсов
 import { caseData as knifeinback } from "@/data/cases/knife-in-back";
 import { caseData as lasttrain } from "@/data/cases/last-train";
-import { caseData as lastrehearsal } from "@/data/cases/last-rehearsaltest";
+import { caseData as lastrehearsal } from "@/data/cases/last-rehearsal";
 
 // Карта кейсов
 const caseMap = {
     "knife-in-back": knifeinback,
     "last-train": lasttrain,
     "last-rehearsal": lastrehearsal,
+};
+// Цвета карточек по владельцу
+const ownerColor: Record<string, string> = {
+    анна: "bg-rose-300 border-rose-300",
+    лида: "bg-green-900 border-green-900",
+    виктор: "bg-sky-900 border-sky-600",
+    system: "bg-zinc-800 border-zinc-600",
+    detective: "bg-emerald-900 border-emerald-600",
 };
 
     // можно добавить другие кейсы тут
@@ -98,16 +106,18 @@ export default function CasePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
                 {data.cards.map((card, index) =>
                     visibleCards[index] ? (
-                        <Card key={index}
-                              onClick={() => handleCardClick(index)}
-                              className={clsx(
-                                  "bg-zinc-900 text-white border-zinc-800 transition cursor-pointer",
-                                  {
-                                      "border-white": openedCard.includes(index),
-                                      "opacity-30 pointer-events-none": !openedCard.includes(index) && movesLeft <= 0,
-                                      "hover:border-white": !openedCard.includes(index) && movesLeft > 0,
-                                  }
-                              )}
+                        <Card
+                            key={index}
+                            onClick={() => handleCardClick(index)}
+                            className={clsx(
+                                "text-white transition cursor-pointer",
+                                ownerColor[card.owner || "system"], // Цветовая тема по owner
+                                {
+                                    "border-white": openedCard.includes(index),
+                                    "opacity-30 pointer-events-none": !openedCard.includes(index) && movesLeft <= 0,
+                                    "hover:border-white": !openedCard.includes(index) && movesLeft > 0,
+                                }
+                            )}
                         >
                             <CardHeader><CardTitle>{card.title}</CardTitle></CardHeader>
                             <CardContent>
