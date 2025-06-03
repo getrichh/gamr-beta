@@ -5,27 +5,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useEffect, useState, useMemo } from "react";
-// Импорты кейсов
 import { caseData as knifeinback } from "@/data/cases/knife-in-back";
 import { caseData as lasttrain } from "@/data/cases/last-train";
 import { caseData as lastrehearsal } from "@/data/cases/last-rehearsal";
 
-// Карта кейсов
 const caseMap = {
     "knife-in-back": knifeinback,
     "last-train": lasttrain,
     "last-rehearsal": lastrehearsal,
 };
-// Цвета карточек по владельцу
+
 const ownerColor: Record<string, string> = {
     анна: "bg-rose-300 border-rose-300",
     лида: "bg-green-900 border-green-900",
     виктор: "bg-sky-900 border-sky-600",
-    system: "bg-zinc-800 border-zinc-600",
+    Концовка: "bg-red-500 border-zinc-600",
     detective: "bg-emerald-900 border-emerald-600",
 };
-
-    // можно добавить другие кейсы тут
 
 export default function CasePage() {
     const { id } = useParams();
@@ -40,17 +36,14 @@ export default function CasePage() {
         });
         return groups;
     }, [data.cards]);
+
     const [movesLeft, setMovesLeft] = useState(50);
     const [openedCard, setOpenedCard] = useState<number[]>([]);
     const [visibleCards, setVisibleCards] = useState<boolean[]>(data.cards.map(c => !c.locked));
     const [selectedCard, setSelectedCard] = useState<null | { title: string; description: string }>(null);
-// Подсчёт количества ключевых карточек
     const keyCardCount = data.cards.filter((card) => card.keyCard).length;
+    const openedKeyCards = data.cards.filter((card, idx) => card.keyCard && openedCard.includes(card.id)).length;
 
-    const openedKeyCards = data.cards.filter(
-        (card, idx) => card.keyCard && openedCard.includes(idx)
-    ).length;
-    // Загрузка из localStorage
     useEffect(() => {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
@@ -61,15 +54,13 @@ export default function CasePage() {
         }
     }, []);
 
-    // Сохранение в localStorage
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ openedCard, visibleCards, movesLeft }));
     }, [openedCard, visibleCards, movesLeft]);
 
-    // Обработка клика по карточке
     const handleCardClick = (index: number) => {
         const card = data.cards[index];
-        const alreadyOpened = openedCard.includes(index);
+        const alreadyOpened = openedCard.includes(card.id);
         if (!visibleCards[index]) return;
         if (!alreadyOpened && card.requiresStep && movesLeft <= 0) return;
 
@@ -77,19 +68,21 @@ export default function CasePage() {
 
         if (!alreadyOpened) {
             if (card.requiresStep) setMovesLeft((prev) => prev - 1);
-            setOpenedCard((prev) => [...prev, index]);
+            setOpenedCard((prev) => [...prev, card.id]);
         }
 
         if (card.unlocks) {
             setVisibleCards((prev) => {
                 const updated = [...prev];
-                card.unlocks.forEach(i => updated[i] = true);
+                card.unlocks.forEach(i => {
+                    const unlockIndex = data.cards.findIndex(c => c.id === i);
+                    if (unlockIndex !== -1) updated[unlockIndex] = true;
+                });
                 return updated;
             });
         }
     };
 
-    // Сброс прогресса
     const resetProgress = () => {
         localStorage.removeItem(STORAGE_KEY);
         location.reload();
@@ -127,11 +120,18 @@ export default function CasePage() {
                                                 : owner}
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {cards.map(({ index, card }) =>
-                                visibleCards[index] ? (
+                            {cards.map(({ index, card }) => {
+                                const isOpened = openedCard.includes(card.id);
+                                return visibleCards[index] ? (
                                     <Card
                                         key={index}
-                                        onClick={() => handleCardClick(index)}
+                                        onClick={() => {
+                                            if (card.isLink && card.linkUrl) {
+                                                window.location.href = card.linkUrl;
+                                            } else {
+                                                handleCardClick(index);
+                                            }
+                                        }}
                                         className={clsx(
                                             "text-white transition cursor-pointer",
                                             ownerColor[card.owner || "system"],
@@ -142,15 +142,19 @@ export default function CasePage() {
                                             }
                                         )}
                                     >
-                                        <CardHeader><CardTitle>{card.title}</CardTitle></CardHeader>
+                                        <CardHeader>
+                                            <CardTitle>
+                                                {card.title} {isOpened && <span className="text-sm">✅</span>}
+                                            </CardTitle>
+                                        </CardHeader>
                                         <CardContent>
                                             <p className="text-sm text-zinc-300">
-                                                {openedCard.includes(index) ? "Просмотрено" : "Нажмите, чтобы изучить"}
+                                                {isOpened ? "Просмотрено" : "Нажмите, чтобы изучить"}
                                             </p>
                                         </CardContent>
                                     </Card>
-                                ) : null
-                            )}
+                                ) : null;
+                            })}
                         </div>
                     </div>
                 ))}
