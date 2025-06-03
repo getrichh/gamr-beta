@@ -31,7 +31,7 @@ export const caseData = {
   `.trim(),
             locked: false,
             requiresStep: false,
-            unlocks: [2, 3, 4],
+            unlocks: [2, 3,5,6],
             owner: "виктор"
         },
         {
@@ -60,7 +60,7 @@ export const caseData = {
   `.trim(),
             locked: true,
             requiresStep: true,
-            unlocks: [5, 6],
+            unlocks: [4],
             owner: "виктор"
         },
         {
@@ -75,7 +75,7 @@ export const caseData = {
   `.trim(),
             locked:true,
             requiresStep: false,
-            unlocks: [6,12],
+            unlocks: [7,14],
             owner: "виктор"
         },
         {
@@ -93,7 +93,7 @@ export const caseData = {
   `.trim(),
             locked: true,
             requiresStep: true,
-            unlocks: [23],
+            unlocks: [],
             owner: "виктор"
         },
         {
@@ -105,7 +105,7 @@ export const caseData = {
   `.trim(),
             locked: true,
             requiresStep: true,
-            unlocks: [],
+            unlocks: [23],
             owner: "виктор"
         },
         {
@@ -123,7 +123,7 @@ export const caseData = {
   `.trim(),
             locked: true,
             requiresStep: false,
-            unlocks: [7, 8],
+            unlocks: [8,9,11,12.13],
             owner: "анна"
         },
         {
@@ -138,7 +138,7 @@ export const caseData = {
   `.trim(),
             locked: true,
             requiresStep: true,
-            unlocks: [21],
+            unlocks: [],
             owner: "анна"
         },
         {
@@ -154,7 +154,7 @@ export const caseData = {
   `.trim(),
             locked: true,
             requiresStep: true,
-            unlocks: [21],
+            unlocks: [10],
             owner: "анна"
         },
         {
@@ -179,7 +179,7 @@ export const caseData = {
             locked: true,
             requiresStep: true,
             owner: "анна",
-            unlocks: [9, 10, 11]
+            unlocks: []
         },
         {
             id: 9,
