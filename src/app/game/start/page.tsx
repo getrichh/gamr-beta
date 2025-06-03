@@ -6,21 +6,6 @@ import { useMemo, useEffect, useState, useRef } from "react";
 
 // 🎭 Описание интро
 const investigations = {
-    "knife-in-back": {
-        title: "Нож в спину",
-        intro:
-            "Тело мужчины найдено в библиотеке старого особняка. Все окна закрыты изнутри, а дверь была заперта. В комнате — трое подозреваемых.",
-    },
-    "last-train": {
-        title: "Последний Поезд",
-        intro:
-            "Поезд мчится в ночь. Один из пассажиров найден мёртвым. Осталось три остановки, чтобы найти убийцу.",
-    },
-    "masquerade": {
-        title: "Маскарад Смерти",
-        intro:
-            "Бал в особняке закончился трагедией. Среди масок скрывается убийца. Ваша задача — узнать, кто он.",
-    },
         "last-rehearsal": {
             title: "Показания: Последняя репетиция",
             intro: [
@@ -30,7 +15,11 @@ const investigations = {
 };
 
 // 🔊 Компонент печати с цикличным звуком
-function TypewriterLine({ text, delay = 0 }: { text: string; delay?: number }) {
+function TypewriterLine({
+                            text,
+                            delay = 0,
+                            skip = false,
+                        }: { text: string; delay?: number; skip?: boolean }) {
     const [displayed, setDisplayed] = useState("");
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -57,6 +46,12 @@ function TypewriterLine({ text, delay = 0 }: { text: string; delay?: number }) {
         };
 
         const type = () => {
+            if (skip) {
+                stopTypingSound();
+                setDisplayed(text);
+                return;
+            }
+
             const currentChar = chars[index];
 
             if (index === 0 && ![" ", "\n"].includes(currentChar)) {
@@ -83,7 +78,7 @@ function TypewriterLine({ text, delay = 0 }: { text: string; delay?: number }) {
             clearTimeout(initialTimeout);
             stopTypingSound();
         };
-    }, [text, delay]);
+    }, [text, delay, skip]);
 
     return (
         <p className="text-lg text-gray-300 font-mono whitespace-pre-wrap">
@@ -92,14 +87,23 @@ function TypewriterLine({ text, delay = 0 }: { text: string; delay?: number }) {
         </p>
     );
 }
-
 // 📜 Основной экран старта игры
 export default function StartPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const id = searchParams.get("id");
 
+    const [skipAll, setSkipAll] = useState(false);
+
     const data = useMemo(() => investigations[id as keyof typeof investigations], [id]);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Enter") setSkipAll(true);
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, []);
 
     if (!id || !data) {
         return (
@@ -120,10 +124,10 @@ export default function StartPage() {
             <div className="max-w-3xl mb-10 space-y-4">
                 {Array.isArray(data.intro) ? (
                     data.intro.map((line, idx) => (
-                        <TypewriterLine key={idx} text={line} delay={idx * 1400} />
+                        <TypewriterLine key={idx} text={line} delay={idx * 1400} skip={skipAll} />
                     ))
                 ) : (
-                    <TypewriterLine text={data.intro as string} />
+                    <TypewriterLine text={data.intro as string} skip={skipAll} />
                 )}
             </div>
 
