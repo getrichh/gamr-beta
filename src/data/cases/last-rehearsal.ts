@@ -14,8 +14,8 @@ export const caseData = {
 "— Я вас сюда проведу, — говорит он. — Чтобы вы видели всё сами. Он... не должен был исчезнуть. Он готовился к последнему спектаклю."
 
   `.trim(),
-            locked: true,
-            requiresStep: true,
+            locked: false,
+            requiresStep: false,
             unlocks: [2, 3,5,6],
             owner: "виктор"
         },
