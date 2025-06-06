@@ -1,4 +1,3 @@
-import { CaseData } from "@/types/case";
 export const caseData = {
     title: "Показания: Последняя репетиция",
     cards: [
@@ -15,8 +14,8 @@ export const caseData = {
 "— Я вас сюда проведу, — говорит он. — Чтобы вы видели всё сами. Он... не должен был исчезнуть. Он готовился к последнему спектаклю."
 
   `.trim(),
-            locked: false,
-            requiresStep: false,
+            locked: true,
+            requiresStep: true,
             unlocks: [2, 3,5,6],
             owner: "виктор"
         },

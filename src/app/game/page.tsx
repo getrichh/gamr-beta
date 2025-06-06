@@ -11,21 +11,7 @@ export default function GamePage() {
 
 
     const games = [
-        {
-            id:"knife-in-back",
-            title: "Нож в спину ",
-            description: "Жертва найдена в особняке. Никто не ушёл. Все под подозрением.",
-        },
-        {
-            id:"last-train",
-            title: "Последний Поезд",
-            description: "Пассажиры исчезают один за другим. Сможешь ли ты выжить до конечной?",
-        },
-        {
-            id:"masquerade",
-            title: "Маскарад Смерти",
-            description: "Бал, тайные личности и один смертельный секрет.",
-        },
+
         {
             id: "last-rehearsal",
             title: "Показания: Последняя репетиция",
@@ -35,7 +21,7 @@ export default function GamePage() {
 
 
     const handlePlay = (id:string)=>{
-        router.push(`/game/start?id=${id}`);
+        router.push(`/game/start/${id}`);
     }
 
 
