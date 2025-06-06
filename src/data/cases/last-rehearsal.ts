@@ -47,7 +47,8 @@ export const caseData = {
             locked: true,
             requiresStep: true,
             unlocks: [4],
-            owner: "виктор"
+            owner: "виктор",
+            images: "/icons/anna.png",
         },
         {
             id: 4,
