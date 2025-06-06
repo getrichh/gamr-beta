@@ -11,12 +11,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { caseData as knifeinback } from "@/data/cases/knife-in-back";
 import { caseData as lasttrain } from "@/data/cases/last-train";
 import { caseData as lastrehearsal } from "@/data/cases/last-rehearsal";
+import { caseData as quietdressingroom } from "@/data/cases/caseDressingRoom";
 
 // Карта кейсов
 const caseMap = {
     "knife-in-back": knifeinback,
     "last-train": lasttrain,
     "last-rehearsal": lastrehearsal,
+    "quiet-dressing-room": quietdressingroom,
 };
 
     // можно добавить другие кейсы тут
