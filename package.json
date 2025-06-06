@@ -19,6 +19,10 @@
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-intersection-observer": "^9.16.0",
+    "react-parallax-mouse": "^2.1.0",
+    "react-parallax-mousemove": "^1.1.0",
+    "react-parallax-tilt": "^1.7.296",
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7"
   },
